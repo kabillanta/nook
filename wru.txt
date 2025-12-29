@@ -1,0 +1,3 @@
+need to do DB setup and i need to complete the protected routing.
+feed
+profile  
