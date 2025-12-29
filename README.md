@@ -1,37 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nook.
 
-## Getting Started
+**Your word is the only currency.**
 
-First, run the development server:
+Nook is an immutable public ledger for personal commitments. It is designed to cure procrastination by leveraging the most powerful motivator in human history: **the fear of public failure.**
+
+### The Problem
+
+Talk is cheap. To-do lists are private. When you break a promise to yourself, nobody knows. Without consequences, discipline crumbles.
+
+### The Solution
+
+Nook removes the safety net.
+
+1. **Declare:** You publish a commitment with a strict deadline.
+2. **Lock:** Once published, **it cannot be edited or deleted.** Typos, regrets, and ambitious goals are permanent.
+3. **Witness:** There are no likes. No comments. Only a "Witness Counter" showing how many people are watching you.
+4. **The Reaper:** If the deadline passes without resolution, the system automatically marks the commitment as **BROKEN**. This stain remains on your profile forever.
+
+You do the work not for the dopamine of a "like," but to avoid the shame of a red "Broken" badge on your permanent record.
+
+---
+
+### Tech Stack
+
+**Frontend (The Face)**
+
+* **Next.js 14** (App Router, Server Components)
+* **Tailwind CSS** ("Paper" Design System, Editorial Typography)
+* **Lucide React** (Minimalist Iconography)
+
+**Backend (The Brain)**
+
+* **FastAPI** (High-performance Python API)
+* **SQLAlchemy** (ORM)
+* **Firebase Auth** (Identity Management)
+* **PostgreSQL (Supabase)** (The Immutable Ledger)
+
+---
+
+### Mechanics
+
+**Immutable Design**
+The database has no `UPDATE` or `DELETE` endpoints for commitment text. Once a record is sealed (`POST`), it exists until the database is destroyed.
+
+**The Reaper Protocol**
+A background process runs periodically to check for expired deadlines.
+`IF (status == 'pending' AND now > deadline) -> SET status = 'broken'`
+
+**Passive Witnessing**
+Interaction is limited to viewing. This removes the dopamine feedback loop of social media, leaving only pure, high-stakes accountability.
+
+---
+
+### Setup & Run
+
+**1. Clone & Install**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or    
-bun dev
+git clone https://github.com/yourusername/nook.git
+cd nook
+npm install          # Frontend dependencies
+pip install -r requirements.txt  # Backend dependencies
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**2. Environment Variables**
+Create a `.env` file with your credentials:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=...
+DATABASE_URL=postgresql://...
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
 
-## Learn More
+**3. Ignite System**
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Terminal 1: The Brain
+uvicorn main:app --reload
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Terminal 2: The Face
+npm run dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# nook
+*Built for those who value their reputation.*
