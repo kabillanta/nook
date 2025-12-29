@@ -1,3 +1,2 @@
-need to do DB setup and i need to complete the protected routing.
-feed
-profile  
+completed the auth, feed, profile
+I should start working on the core LOGIC 
