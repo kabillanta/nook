@@ -1,7 +1,7 @@
 import CommitmentCard from "./CommitmentCard";
 
 async function getFeed() {
-  const res = await fetch("${process.env.NEXT_PUBLIC_API_URL}/feed", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/feed`, {
     cache: "no-store", 
   });
   if (!res.ok) return [];
