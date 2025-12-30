@@ -14,7 +14,7 @@ export default function ExplorePage() {
   useEffect(() => {
     async function fetchExplore() {
       try {
-        const res = await fetch("http://127.0.0.1:8000/explore");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/explore`);
         if (res.ok) {
           setCommitments(await res.json());
         }

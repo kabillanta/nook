@@ -39,8 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-firebase.ts
-
 
 # nook-api files
 /nook-api/.venv

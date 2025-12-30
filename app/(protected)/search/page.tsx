@@ -20,7 +20,7 @@ function SearchContent() {
     async function doSearch() {
       setLoading(true);
       try {
-        const res = await fetch(`http://127.0.0.1:8000/search?q=${encodeURIComponent(query as string)}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search?q=${encodeURIComponent(query as string)}`);
         if (res.ok) {
           setResults(await res.json());
         }

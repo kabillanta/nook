@@ -31,7 +31,7 @@ export default function CommitmentCard({ item }: { item: any }) {
   useEffect(() => {
     if (inView) {
       // Fire and forget (don't wait for response)
-      fetch(`http://127.0.0.1:8000/commitments/${item.id}/witness`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/commitments/${item.id}/witness`, {
         method: "POST",
       });
       // Optimistically update the UI to show the view happening
@@ -59,7 +59,7 @@ export default function CommitmentCard({ item }: { item: any }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/commitments/${item.id}/complete`,
+        `${process.env.NEXT_PUBLIC_API_URL}/commitments/${item.id}/complete`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

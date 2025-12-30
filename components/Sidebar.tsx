@@ -16,7 +16,7 @@ export default function Sidebar() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          const res = await fetch(`http://127.0.0.1:8000/users/id/${user.uid}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/id/${user.uid}`);
           if (res.ok) {
             const data = await res.json();
             setUsername(data.username);

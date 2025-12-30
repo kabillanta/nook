@@ -47,8 +47,7 @@ export default function LoginPage() {
       const user = result.user;
 
       // B. Check Backend: Does this user exist in Postgres?
-      // (Replace with your actual API URL env variable in production)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
       const res = await fetch(`${apiUrl}/users/id/${user.uid}`);
 
