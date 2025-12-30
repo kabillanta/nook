@@ -34,15 +34,14 @@ export default function CreatePage() {
 
     setLoading(true);
 
-    // Combine Date & Time into ISO String (e.g. 2024-10-12T17:00:00)
     const deadlineISO = new Date(`${date}T${time}`).toISOString();
 
     try {
-      const res = await fetch("${process.env.NEXT_PUBLIC_API_URL}/commitments", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/commitments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: uid, // Use the real Firebase ID
+          user_id: uid, 
           text: text,
           deadline: deadlineISO,
         }),
