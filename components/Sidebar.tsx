@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation"; // <--- Import usePathname
 import { Home, User, Plus, LogOut, Search } from "lucide-react";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -10,11 +10,11 @@ import { auth } from "@/lib/firebase";
 export default function Sidebar() {
   const [username, setUsername] = useState("");
   const router = useRouter();
+  const pathname = usePathname(); // <--- Get the current URL (e.g., "/home" or "/alex_c")
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Fetch username in background (doesn't block the page load)
         try {
           const res = await fetch(`http://127.0.0.1:8000/users/id/${user.uid}`);
           if (res.ok) {
@@ -42,9 +42,29 @@ export default function Sidebar() {
       </Link>
 
       <nav className="flex-1 space-y-4 w-full">
-        <NavItem icon={<Home size={26} />} text="Registry" href="/home" active />
-        <NavItem icon={<Search size={26} />} text="Explore" href="/explore" />
-        <NavItem icon={<User size={26} />} text="Profile" href={username ? `/${username}` : "#"} />
+        {/* 1. Registry is active if path is /home */}
+        <NavItem 
+          icon={<Home size={26} />} 
+          text="Registry" 
+          href="/home" 
+          active={pathname === "/home"} 
+        />
+        
+        {/* 2. Explore is active if path is /explore */}
+        <NavItem 
+          icon={<Search size={26} />} 
+          text="Explore" 
+          href="/explore" 
+          active={pathname === "/explore"} 
+        />
+        
+        {/* 3. Profile is active ONLY if path matches MY username */}
+        <NavItem 
+          icon={<User size={26} />} 
+          text="Profile" 
+          href={username ? `/${username}` : "#"} 
+          active={pathname === `/${username}`} 
+        />
       </nav>
 
       <Link href="/create" className="w-12 h-12 xl:w-full bg-[#2F3E46] hover:bg-[#1a2429] text-white font-bold rounded-full xl:rounded-sm shadow-sm transition-colors mb-6 flex items-center justify-center gap-2">
@@ -52,7 +72,6 @@ export default function Sidebar() {
         <span className="hidden xl:inline text-lg">Declare</span>
       </Link>
 
-      {/* User Profile - Loads smoothly */}
       <div onClick={handleLogout} className="flex items-center gap-3 p-2 xl:p-3 hover:bg-[#E1E5EA]/50 rounded-full xl:rounded-sm cursor-pointer transition-colors mt-auto w-full justify-center xl:justify-start group">
         <div className="h-10 w-10 bg-[#D4A373] text-white rounded-full flex-shrink-0 flex items-center justify-center font-bold text-sm uppercase">
           {username ? username.substring(0, 2) : "?"}
@@ -67,10 +86,11 @@ export default function Sidebar() {
   );
 }
 
+// Helper Component
 function NavItem({ icon, text, href, active }: any) {
   return (
     <Link href={href}>
-      <div className={`flex items-center gap-4 px-4 xl:px-4 py-3 rounded-full xl:rounded-full cursor-pointer transition-colors text-xl justify-center xl:justify-start ${active ? 'font-bold text-[#2F3E46]' : 'text-[#1F2933] hover:bg-[#E1E5EA]/50'}`}>
+      <div className={`flex items-center gap-4 px-4 xl:px-4 py-3 rounded-full xl:rounded-full cursor-pointer transition-colors text-xl justify-center xl:justify-start ${active ? 'font-bold text-[#2F3E46] bg-[#E1E5EA]/30' : 'text-[#1F2933] hover:bg-[#E1E5EA]/50'}`}>
         {icon} <span className="hidden xl:inline">{text}</span>
       </div>
     </Link>

@@ -1,2 +1,2 @@
-completed the auth, feed, profile
-I should start working on the core LOGIC 
+completed V1 ready to ship
+v2 - AI authentication

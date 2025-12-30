@@ -1,127 +1,148 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Lock, ArrowRight } from "lucide-react";
-import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-console.log(auth);
+import { auth } from "@/lib/firebase";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
-  
-  async function handleLogin(e: React.FormEvent) {
-  e.preventDefault();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    router.push("/home");
-  } catch (err: any) {
-    alert(err.message);
-  }
-}
+  // 1. Standard Email Login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/home"); // Firebase handles the rest
+    } catch (err: any) {
+      setError("Invalid credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Google Login with "Existence Check"
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+
+    const provider = new GoogleAuthProvider();
+
+    try {
+      // A. Auth with Firebase
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // B. Check Backend: Does this user exist in Postgres?
+      // (Replace with your actual API URL env variable in production)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+      const res = await fetch(`${apiUrl}/users/id/${user.uid}`);
+
+      if (res.ok) {
+        // CASE 1: User exists -> Go to Home
+        router.push("/home");
+      } else {
+        // CASE 2: User is new (No Username) -> Send to Signup to finish setup
+        // We pass the uid so signup knows to skip the password step
+        router.push("/signup?step=username");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Google sign-in failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F7F6F3] p-6 text-[#1F2933]">
-      {/* Brand Header */}
-      <Link
-        href="/"
-        className="mb-8 font-serif font-bold text-3xl text-[#2F3E46]"
-      >
-        Nook.
-      </Link>
+    <div className="min-h-screen bg-[#F7F6F3] flex items-center justify-center p-4 text-[#1F2933]">
+      <div className="w-full max-w-md bg-white border border-[#E1E5EA] p-8 shadow-sm rounded-sm">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-sm text-[#9AA5B1] hover:text-[#2F3E46] mb-8 transition-colors"
+        >
+          <ArrowLeft size={16} /> Back
+        </Link>
 
-      {/* Login Card */}
-      <div className="w-full max-w-md bg-white border border-[#E1E5EA] shadow-sm p-8 rounded-sm">
-        <h1 className="font-serif text-2xl font-bold text-[#1F2933] mb-2">
-          Access the Registry
+        <h1 className="font-serif font-bold text-3xl mb-2 text-[#2F3E46]">
+          Welcome back.
         </h1>
-        <p className="text-[#6B7280] text-sm mb-8">
-          Enter your credentials to view or update your commitments.
-        </p>
+        <p className="text-[#6B7280] mb-8">Sign in to your ledger.</p>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          {/* Email Input */}
-          <div className="space-y-2">
-            <label
-              className="text-xs font-bold uppercase tracking-wider text-[#4B5563]"
-              htmlFor="email"
-            >
-              Email Address
+        {error && (
+          <div className="bg-[#BF4343]/10 text-[#BF4343] p-3 text-sm rounded-sm mb-6">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#9AA5B1] mb-1">
+              Email
             </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9AA5B1]" />
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E1E5EA] rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
-                placeholder="name@example.com"
-              />
-            </div>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-[#F7F6F3] border border-[#E1E5EA] p-3 rounded-sm text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
+            />
           </div>
 
-          {/* Password Input */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <label
-                className="text-xs font-bold uppercase tracking-wider text-[#4B5563]"
-                htmlFor="password"
-              >
-                Password
-              </label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-[#2F3E46] hover:underline"
-              >
-                Lost key?
-              </Link>
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9AA5B1]" />
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E1E5EA] rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
-                placeholder="••••••••"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#9AA5B1] mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-[#F7F6F3] border border-[#E1E5EA] p-3 rounded-sm text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
+            />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-[#2F3E46] text-white font-medium py-3 rounded-sm hover:bg-[#1a2429] transition-colors flex items-center justify-center gap-2"
+            disabled={loading}
+            className="w-full bg-[#2F3E46] text-white font-bold py-3 rounded-sm hover:bg-[#1a2429] transition-all disabled:opacity-70 flex justify-center items-center gap-2"
           >
-            Sign In
-            <ArrowRight className="w-4 h-4" />
+            {loading ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 
-        {/* --- DIVIDER --- */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#E1E5EA]"></div>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-[#9AA5B1]">
-              Or continue with
-            </span>
-          </div>
+        <div className="my-6 flex items-center gap-4">
+          <div className="h-px bg-[#E1E5EA] flex-1"></div>
+          <span className="text-xs text-[#9AA5B1] uppercase font-bold">OR</span>
+          <div className="h-px bg-[#E1E5EA] flex-1"></div>
         </div>
 
-        {/* --- GOOGLE BUTTON --- */}
+        {/* --- GOOGLE LOGIN BUTTON --- */}
         <button
+          onClick={handleGoogleLogin}
           type="button"
-          className="w-full bg-white border border-[#E1E5EA] text-[#1F2933] font-medium py-2.5 rounded-sm hover:bg-[#F7F6F3] transition-colors flex items-center justify-center gap-3"
+          disabled={loading}
+          className="w-full bg-white border border-[#E1E5EA] text-[#1F2933] font-bold py-3 rounded-sm hover:bg-[#F7F6F3] transition-all flex items-center justify-center gap-2"
         >
-          {/* Google SVG Icon */}
+          {/* Simple Google G Logo SVG */}
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -132,7 +153,7 @@ export default function LoginPage() {
               fill="#34A853"
             />
             <path
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.26.81-.58z"
               fill="#FBBC05"
             />
             <path
@@ -140,21 +161,15 @@ export default function LoginPage() {
               fill="#EA4335"
             />
           </svg>
-          Google
+          Sign in with Google
         </button>
 
-        {/* Footer Link */}
-        <div className="mt-8 text-center border-t border-[#E1E5EA] pt-6">
-          <p className="text-sm text-[#6B7280]">
-            No record yet?{" "}
-            <Link
-              href="/signup"
-              className="text-[#2F3E46] font-bold hover:underline"
-            >
-              Initialize identity.
-            </Link>
-          </p>
-        </div>
+        <p className="mt-8 text-center text-sm text-[#6B7280]">
+          No account?{" "}
+          <Link href="/signup" className="text-[#2F3E46] font-bold underline">
+            Create one
+          </Link>
+        </p>
       </div>
     </div>
   );

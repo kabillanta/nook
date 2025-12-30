@@ -1,13 +1,16 @@
 import firebase_admin
 from firebase_admin import auth, credentials
 from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware  # <--- IMPORT THIS
+from fastapi.middleware.cors import CORSMiddleware 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal, engine
 import models
+from datetime import datetime
+from sqlalchemy import or_
+from apscheduler.schedulers.background import BackgroundScheduler 
+from contextlib import asynccontextmanager 
 
-# 1. Create Database Tables (If they don't exist yet)
 models.Base.metadata.create_all(bind=engine)
 
 # 2. Initialize Firebase
@@ -15,7 +18,52 @@ models.Base.metadata.create_all(bind=engine)
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
-app = FastAPI()
+def reaper_job():
+    """
+    This function runs automatically in the background.
+    It creates its own database session, checks for dead commitments,
+    marks them as 'broken', and closes the session.
+    """
+    db = SessionLocal() # Create a fresh DB session
+    try:
+        now = datetime.utcnow()
+        print(f"💀 The Reaper is scanning... (Time: {now})")
+        
+        # Find expired pending commitments
+        expired = db.query(models.Commitment).filter(
+            models.Commitment.status == "pending",
+            models.Commitment.deadline < now
+        ).all()
+        
+        if expired:
+            print(f"💀 The Reaper claimed {len(expired)} souls.")
+            for comm in expired:
+                comm.status = "broken"
+            db.commit()
+        else:
+            print("💀 No souls to claim.")
+            
+    except Exception as e:
+        print(f"Reaper Error: {e}")
+    finally:
+        db.close() # Always close the session!
+        
+        
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(reaper_job, 'interval', minutes=1) # Run every 1 minute
+    scheduler.start()
+    print("--- 💀 THE REAPER IS ONLINE ---")
+    
+    yield # The app runs here
+    
+    # Shutdown
+    scheduler.shutdown()
+
+
+app = FastAPI(lifespan=lifespan)
 
 # 3. Add CORS Middleware (CRITICAL for Next.js)
 app.add_middleware(
@@ -32,9 +80,14 @@ class RegisterRequest(BaseModel):
     username: str
 
 class CommitmentCreate(BaseModel):
-    user_id: str # We will trust the frontend ID for now (simpler)
+    user_id: str 
     text: str
-    deadline: str # ISO Format string (e.g. "2024-12-31T12:00:00")
+    deadline: str
+    
+    
+class CompletionRequest(BaseModel):
+    user_id: str
+    proof: str
 
 def get_db():
     db = SessionLocal()
@@ -111,21 +164,18 @@ def get_feed(db: Session = Depends(get_db)):
     
     return results
 
-
 @app.get("/users/{username}")
 def get_user_profile(username: str, db: Session = Depends(get_db)):
-    # 1. Find the User
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # 2. Get their Commitments (Newest first)
     commitments = db.query(models.Commitment)\
+        .options(joinedload(models.Commitment.owner))\
         .filter(models.Commitment.user_id == user.id)\
         .order_by(models.Commitment.created_at.desc())\
         .all()
     
-    # 3. Calculate Stats
     total = len(commitments)
     kept = sum(1 for c in commitments if c.status == 'kept')
     
@@ -136,8 +186,7 @@ def get_user_profile(username: str, db: Session = Depends(get_db)):
             "stats": {"total": total, "kept": kept}
         },
         "commitments": commitments
-    }
-    
+    }    
     
 @app.get("/users/id/{uid}")
 def get_user_by_uid(uid: str, db: Session = Depends(get_db)):
@@ -145,3 +194,81 @@ def get_user_by_uid(uid: str, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return {"username": user.username, "email": user.email}
+
+
+@app.put("/commitments/{id}/complete")
+def mark_commitment_complete(id: int, data: CompletionRequest, db: Session = Depends(get_db)):
+    # 1. Find the commitment
+    comm = db.query(models.Commitment).filter(models.Commitment.id == id).first()
+    
+    if not comm:
+        raise HTTPException(status_code=404, detail="Commitment not found")
+
+    # 2. Security Check: Is this YOUR commitment?
+    if comm.user_id != data.user_id:
+        raise HTTPException(status_code=403, detail="You cannot complete someone else's commitment.")
+
+    # 3. Rule Check: Is it already finished?
+    if comm.status != "pending":
+        raise HTTPException(status_code=400, detail=f"This commitment is already {comm.status}.")
+
+    # 4. The Reaper Check: Is it too late?
+    # We compare the current UTC time with the deadline
+    if datetime.utcnow() > comm.deadline.replace(tzinfo=None):
+        comm.status = "broken" # It's actually failed
+        db.commit()
+        raise HTTPException(status_code=400, detail="The deadline has passed. The Reaper has claimed this.")
+
+    # 5. Success: Mark as Kept
+    comm.status = "kept"
+    # We could save the 'proof' text here if we added a column for it
+    db.commit()
+    
+    return {"status": "kept"}
+
+@app.post("/commitments/{id}/witness")
+def witness_commitment(id: int, db: Session = Depends(get_db)):
+    # 1. Find the commitment
+    comm = db.query(models.Commitment).filter(models.Commitment.id == id).first()
+    if not comm:
+        raise HTTPException(status_code=404, detail="Commitment not found")
+    
+    # 2. Increment the counter
+    comm.witness_count += 1
+    db.commit()
+    
+    return {"status": "witnessed", "new_count": comm.witness_count}
+
+
+@app.get("/explore")
+def get_explore_feed(db: Session = Depends(get_db)):
+    # Fetch top 50 commitments ordered by witness_count (Highest first)
+    results = db.query(models.Commitment)\
+        .options(joinedload(models.Commitment.owner))\
+        .order_by(models.Commitment.witness_count.desc())\
+        .limit(50)\
+        .all()
+    
+    return results
+
+@app.get("/search")
+def search_ledger(q: str, db: Session = Depends(get_db)):
+    if not q:
+        return {"users": [], "commitments": []}
+
+    search_term = f"%{q}%" # SQL wildcard for "contains"
+
+    # 1. Search Users
+    users = db.query(models.User).filter(
+        models.User.username.ilike(search_term) # ilike = case insensitive
+    ).limit(5).all()
+
+    # 2. Search Commitments
+    commitments = db.query(models.Commitment)\
+        .options(joinedload(models.Commitment.owner))\
+        .filter(models.Commitment.text.ilike(search_term))\
+        .order_by(models.Commitment.witness_count.desc())\
+        .limit(20)\
+        .all()
+
+    return {"users": users, "commitments": commitments}
