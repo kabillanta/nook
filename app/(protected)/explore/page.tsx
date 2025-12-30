@@ -28,30 +28,30 @@ export default function ExplorePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3] text-[#1F2933] font-sans">
+    <div className="min-h-screen bg-nook-paper text-[#1F2933] font-sans">
       <div className="flex w-full min-h-screen">
 
         <Sidebar />
 
-        <main className="flex-1 border-r border-[#E1E5EA] min-w-0">
-          <div className="sticky top-0 bg-[#F7F6F3]/95 backdrop-blur-sm border-b border-[#E1E5EA] px-4 py-4 z-10">
+        <main className="flex-1 border-r border-nook-border min-w-0">
+          <div className="sticky top-0 bg-nook-paper/95 backdrop-blur-sm border-b border-nook-border px-4 py-4 z-10">
             <h2 className="font-serif font-bold text-xl flex items-center gap-2">
-              <Flame className="text-[#D4A373]" size={20} />
+              <Flame className="text-nook-accent" size={20} />
               High Stakes
             </h2>
           </div>
 
           <div className="w-full">
             {loading ? (
-              <div className="p-12 text-center text-[#9AA5B1]">Finding top commitments...</div>
+              <div className="p-12 text-center text-nook-subtle">Finding top commitments...</div>
             ) : commitments.length === 0 ? (
-               <div className="p-12 text-center text-[#9AA5B1]">No data yet.</div>
+               <div className="p-12 text-center text-nook-subtle">No data yet.</div>
             ) : (
               commitments.map((item: any) => (
                 <CommitmentCard key={item.id} item={item} />
               ))
             )}
-            <div className="py-12 text-center text-[#9AA5B1] text-sm italic">
+            <div className="py-12 text-center text-nook-subtle text-sm italic">
               Ranked by Witness Count.
             </div>
           </div>

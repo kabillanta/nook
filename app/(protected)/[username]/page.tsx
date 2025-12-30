@@ -51,14 +51,14 @@ export default function ProfilePage() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F6F3] text-[#9AA5B1]">
+      <div className="min-h-screen flex items-center justify-center bg-nook-paper text-nook-subtle">
         Loading Record...
       </div>
     );
 
   if (error || !data)
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F7F6F3] text-[#1F2933]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-nook-paper text-[#1F2933]">
         <h1 className="font-serif text-3xl mb-2">404</h1>
         <p className="text-[#6B7280]">User record not found.</p>
         <Link href="/home" className="mt-4 text-[#2F3E46] underline">
@@ -68,16 +68,16 @@ export default function ProfilePage() {
     );
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3] text-[#1F2933] font-sans">
+    <div className="min-h-screen bg-nook-paper text-[#1F2933] font-sans">
       <div className="flex w-full min-h-screen">
         {/* --- LEFT SIDEBAR --- */}
         <Sidebar />
 
         {/* --- CENTER PROFILE --- */}
-        <main className="flex-1 border-r border-[#E1E5EA] min-w-0">
+        <main className="flex-1 border-r border-nook-border min-w-0">
           {/* Header Bar */}
-          <div className="sticky top-0 bg-[#F7F6F3]/95 backdrop-blur-sm border-b border-[#E1E5EA] px-4 py-3 z-10 flex items-center gap-4">
-            <Link href="/home" className="lg:hidden text-[#9AA5B1]">
+          <div className="sticky top-0 bg-nook-paper/95 backdrop-blur-sm border-b border-nook-border px-4 py-3 z-10 flex items-center gap-4">
+            <Link href="/home" className="lg:hidden text-nook-subtle">
               <Home size={20} />
             </Link>
             <div>
@@ -91,7 +91,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Hero */}
-          <div className="p-6 border-b border-[#E1E5EA] bg-white">
+          <div className="p-6 border-b border-nook-border bg-white">
             <div className="flex justify-between items-start mb-4">
               <div className="h-24 w-24 bg-[#2F3E46] text-white rounded-full flex items-center justify-center font-serif text-3xl font-bold border-4 border-white shadow-sm uppercase">
                 {data.profile.username.substring(0, 2)}
@@ -114,14 +114,14 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="flex gap-8 border-b border-[#E1E5EA] -mx-6 px-6">
+            <div className="flex gap-8 border-b border-nook-border -mx-6 px-6">
               <div className="pb-3 border-b-2 border-[#2F3E46] font-bold text-[#1F2933] cursor-pointer">
                 Records
               </div>
-              <div className="pb-3 border-b-2 border-transparent text-[#9AA5B1] hover:text-[#1F2933] cursor-pointer transition-colors">
+              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors">
                 Pending
               </div>
-              <div className="pb-3 border-b-2 border-transparent text-[#9AA5B1] hover:text-[#1F2933] cursor-pointer transition-colors">
+              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors">
                 Archived
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function ProfilePage() {
           {/* Commitments List (Using Component) */}
           <div className="w-full">
             {data.commitments.length === 0 ? (
-              <div className="p-12 text-center text-[#9AA5B1] italic">
+              <div className="p-12 text-center text-nook-subtle italic">
                 This user has no public record.
               </div>
             ) : (
@@ -140,7 +140,7 @@ export default function ProfilePage() {
               ))
             )}
 
-            <div className="py-12 text-center text-[#9AA5B1] text-sm italic">
+            <div className="py-12 text-center text-nook-subtle text-sm italic">
               End of ledger.
             </div>
           </div>

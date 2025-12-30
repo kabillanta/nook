@@ -87,10 +87,10 @@ export default function LandingPage() {
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-[#F7F6F3] text-[#1F2933]">
+    <div className="min-h-screen flex flex-col font-sans bg-nook-paper text-[#1F2933]">
       
       {/* --- Navbar --- */}
-      <header className="sticky top-0 z-50 bg-[#F7F6F3]/95 border-b border-[#E1E5EA] backdrop-blur-sm">
+      <header className="sticky top-0 z-50 bg-nook-paper/95 border-b border-nook-border backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           
           <div className="text-3xl font-bold font-serif tracking-tight text-[#2F3E46]">
@@ -107,7 +107,7 @@ export default function LandingPage() {
             {/* --- CONDITIONAL AUTH BUTTONS --- */}
             {loadingAuth ? (
               // Show nothing or a small spinner while checking
-              <span className="text-sm text-[#9AA5B1]">...</span>
+              <span className="text-sm text-nook-subtle">...</span>
             ) : user ? (
               // CASE 1: USER IS LOGGED IN
               <>
@@ -146,7 +146,7 @@ export default function LandingPage() {
 
       <main className="flex-grow">
         {/* --- Hero Section --- */}
-        <section className="relative pt-20 pb-32 border-b border-[#E1E5EA]">
+        <section className="relative pt-20 pb-32 border-b border-nook-border">
           <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
             
             <div className="max-w-xl">
@@ -180,7 +180,7 @@ export default function LandingPage() {
               <div className="absolute top-2 left-12 right-2 bottom-[-0.5rem] bg-[#F3F4F6] rounded-sm -z-10 transform -rotate-1"></div>
 
               {/* THE ACTIVE CARD */}
-              <div className="bg-white border border-[#E1E5EA] p-10 shadow-lg rounded-sm relative transition-all duration-300 w-full flex flex-col justify-between min-h-[350px]">
+              <div className="bg-white border border-nook-border p-10 shadow-lg rounded-sm relative transition-all duration-300 w-full flex flex-col justify-between min-h-[350px]">
                 
                 <div className={`absolute -top-3 -right-3 bg-[#D4A373] text-white text-xs font-bold px-3 py-1 shadow-sm uppercase tracking-wider transform rotate-3 transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}>
                   Commitment {current.id}
@@ -193,7 +193,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                     <p className="font-bold text-[#1F2933]">{current.name}</p>
-                    <p className="text-xs text-[#9AA5B1]">{current.joined}</p>
+                    <p className="text-xs text-nook-subtle">{current.joined}</p>
                     </div>
                 </div>
                 <Clock className="w-5 h-5 text-[#D4A373]" />
@@ -212,9 +212,9 @@ export default function LandingPage() {
                     </p>
                 </div>
 
-                <div className={`grid grid-cols-2 gap-4 border-t border-[#E1E5EA] pt-6 transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+                <div className={`grid grid-cols-2 gap-4 border-t border-nook-border pt-6 transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}>
                 <div>
-                    <p className="text-xs text-[#9AA5B1] uppercase tracking-wider mb-1">
+                    <p className="text-xs text-nook-subtle uppercase tracking-wider mb-1">
                     Status
                     </p>
                     <div className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export default function LandingPage() {
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-xs text-[#9AA5B1] uppercase tracking-wider mb-1">
+                    <p className="text-xs text-nook-subtle uppercase tracking-wider mb-1">
                     Deadline
                     </p>
                     <p className={`font-medium ${current.deadlineColor}`}>
@@ -243,7 +243,7 @@ export default function LandingPage() {
         <section className="py-24 max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-12">
             <div className="group">
-              <div className="h-12 w-12 border border-[#E1E5EA] bg-white flex items-center justify-center mb-6 group-hover:border-[#2F3E46] transition-colors">
+              <div className="h-12 w-12 border border-nook-border bg-white flex items-center justify-center mb-6 group-hover:border-[#2F3E46] transition-colors">
                 <Lock className="w-6 h-6 text-[#2F3E46]" />
               </div>
               <h3 className="text-xl font-bold font-serif mb-3 text-[#1F2933]">Immutable by Design</h3>
@@ -252,7 +252,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="group">
-              <div className="h-12 w-12 border border-[#E1E5EA] bg-white flex items-center justify-center mb-6 group-hover:border-[#2F3E46] transition-colors">
+              <div className="h-12 w-12 border border-nook-border bg-white flex items-center justify-center mb-6 group-hover:border-[#2F3E46] transition-colors">
                 <Eye className="w-6 h-6 text-[#2F3E46]" />
               </div>
               <h3 className="text-xl font-bold font-serif mb-3 text-[#1F2933]">Passive Witnessing</h3>
@@ -261,7 +261,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="group">
-              <div className="h-12 w-12 border border-[#E1E5EA] bg-white flex items-center justify-center mb-6 group-hover:border-[#2F3E46] transition-colors">
+              <div className="h-12 w-12 border border-nook-border bg-white flex items-center justify-center mb-6 group-hover:border-[#2F3E46] transition-colors">
                 <Clock className="w-6 h-6 text-[#2F3E46]" />
               </div>
               <h3 className="text-xl font-bold font-serif mb-3 text-[#1F2933]">The Reaper Protocol</h3>
@@ -272,9 +272,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <footer className="border-t border-[#E1E5EA] py-12 text-center bg-white">
+        <footer className="border-t border-nook-border py-12 text-center bg-white">
           <p className="font-serif font-bold text-2xl text-[#2F3E46] mb-4">Nook.</p>
-          <p className="text-[#9AA5B1] text-sm">© {new Date().getFullYear()} Nook Inc. Your reputation is your own.</p>
+          <p className="text-nook-subtle text-sm">© {new Date().getFullYear()} Nook Inc. Your reputation is your own.</p>
         </footer>
       </main>
     </div>

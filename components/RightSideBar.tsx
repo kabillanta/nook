@@ -33,23 +33,23 @@ export default function RightSidebar() {
   };
 
   return (
-    <aside className="w-[350px] hidden lg:block px-8 py-8 h-screen sticky top-0 flex-shrink-0 border-l border-[#E1E5EA]">
+    <aside className="w-[350px] hidden lg:block px-8 py-8 h-screen sticky top-0 flex-shrink-0 border-l border-nook-border">
       
       {/* Functional Search Bar */}
       <div className="relative mb-8">
-        <Search className="absolute left-4 top-3.5 text-[#9AA5B1]" size={18} />
+        <Search className="absolute left-4 top-3.5 text-nook-subtle" size={18} />
         <input 
           type="text" 
           placeholder="Search the ledger..." 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleSearch} // Listen for Enter
-          className="w-full bg-white border border-[#E1E5EA] rounded-full py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-[#2F3E46] transition-colors shadow-sm"
+          className="w-full bg-white border border-nook-border rounded-full py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-[#2F3E46] transition-colors shadow-sm"
         />
       </div>
 
       {/* ... (Rest of the component remains the same) ... */}
-      <div className="bg-white border border-[#E1E5EA] rounded-sm p-5 mb-6 shadow-sm">
+      <div className="bg-white border border-nook-border rounded-sm p-5 mb-6 shadow-sm">
         <h3 className="font-serif font-bold text-lg mb-4 text-[#2F3E46] flex items-center gap-2">
           <Flame size={18} className="text-[#D4A373]" />
           High Stakes
@@ -57,11 +57,11 @@ export default function RightSidebar() {
         
         <div className="space-y-4">
           {trending.length === 0 ? (
-            <p className="text-sm text-[#9AA5B1] italic">No data available.</p>
+            <p className="text-sm text-nook-subtle italic">No data available.</p>
           ) : (
             trending.map((item: any) => (
               <Link key={item.id} href={`/${item.owner.username}`}>
-                <div className="cursor-pointer hover:bg-[#F7F6F3] p-2 -mx-2 rounded-sm transition-colors group">
+                <div className="cursor-pointer hover:bg-nook-paper p-2 -mx-2 rounded-sm transition-colors group">
                   <div className="flex justify-between text-xs text-[#6B7280] mb-1">
                     <span className="font-bold text-[#2F3E46]">@{item.owner.username}</span>
                     <span>{item.witness_count} witnesses</span>
@@ -75,12 +75,12 @@ export default function RightSidebar() {
           )}
         </div>
 
-        <Link href="/explore" className="mt-4 pt-4 border-t border-[#E1E5EA] text-[#D4A373] text-sm hover:text-[#2F3E46] flex items-center gap-1 transition-colors">
+        <Link href="/explore" className="mt-4 pt-4 border-t border-nook-border text-[#D4A373] text-sm hover:text-[#2F3E46] flex items-center gap-1 transition-colors">
           View all high stakes <ArrowRight size={14} />
         </Link>
       </div>
 
-      <div className="text-xs text-[#9AA5B1] leading-relaxed px-2">
+      <div className="text-xs text-nook-subtle leading-relaxed px-2">
         <p className="mb-2">
           Nook is an immutable public ledger. <br/> Your reputation is your currency.
         </p>

@@ -3,7 +3,7 @@ import { FileQuestion, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F7F6F3] text-[#1F2933] p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-nook-paper text-[#1F2933] p-6">
       
       {/* Brand Header */}
       <div className="absolute top-8 left-8">
@@ -15,8 +15,8 @@ export default function NotFound() {
       <div className="max-w-md w-full text-center">
         
         {/* Icon Container */}
-        <div className="mx-auto h-20 w-20 bg-white border border-[#E1E5EA] rounded-sm flex items-center justify-center mb-8 shadow-sm">
-          <FileQuestion className="w-10 h-10 text-[#9AA5B1]" />
+        <div className="mx-auto h-20 w-20 bg-white border border-nook-border rounded-sm flex items-center justify-center mb-8 shadow-sm">
+          <FileQuestion className="w-10 h-10 text-nook-subtle" />
         </div>
 
         {/* 404 Heading */}
@@ -44,8 +44,8 @@ export default function NotFound() {
         </Link>
 
         {/* Footer Note */}
-        <div className="mt-12 pt-8 border-t border-[#E1E5EA]">
-          <p className="text-xs text-[#9AA5B1] font-mono uppercase tracking-widest">
+        <div className="mt-12 pt-8 border-t border-nook-border">
+          <p className="text-xs text-nook-subtle font-mono uppercase tracking-widest">
             Error Code: PAGE_NOT_FOUND
           </p>
         </div>

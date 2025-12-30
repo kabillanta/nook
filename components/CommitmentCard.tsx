@@ -109,7 +109,7 @@ export default function CommitmentCard({ item }: { item: any }) {
     // Attach the 'ref' here so the observer watches this div
     <div
       ref={ref}
-      className="p-4 sm:p-6 border-b border-[#E1E5EA] hover:bg-white transition-colors group"
+      className="p-4 sm:p-6 border-b border-nook-border hover:bg-white transition-colors group"
     >
       <div className="flex gap-4">
         <Link
@@ -129,7 +129,7 @@ export default function CommitmentCard({ item }: { item: any }) {
               <span className="font-bold text-[#1F2933] truncate">
                 {item.owner.username}
               </span>
-              <span className="text-[#9AA5B1] text-sm truncate">
+              <span className="text-nook-subtle text-sm truncate">
                 @{item.owner.username}
               </span>
             </Link>
@@ -138,7 +138,7 @@ export default function CommitmentCard({ item }: { item: any }) {
               {/* SHARE BUTTON */}
               <button
                 onClick={handleShare}
-                className="text-[#9AA5B1] hover:text-[#2F3E46] transition-colors p-1"
+                className="text-nook-subtle hover:text-[#2F3E46] transition-colors p-1"
                 title="Share to Public"
               >
                 <Share2 size={16} />
@@ -158,7 +158,7 @@ export default function CommitmentCard({ item }: { item: any }) {
                 // ... existing MoreHorizontal logic ...
                 <MoreHorizontal
                   size={16}
-                  className="text-[#9AA5B1] flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="text-nook-subtle flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 />
               )}
             </div>
@@ -195,7 +195,7 @@ export default function CommitmentCard({ item }: { item: any }) {
             </div>
 
             {/* The Eye Counter */}
-            <div className="flex items-center gap-1.5 text-[#9AA5B1] text-xs group-hover:text-[#2F3E46] transition-colors ml-auto">
+            <div className="flex items-center gap-1.5 text-nook-subtle text-xs group-hover:text-[#2F3E46] transition-colors ml-auto">
               <Eye size={16} />
               {/* Use the local state variable here */}
               <span>{witnessCount}</span>

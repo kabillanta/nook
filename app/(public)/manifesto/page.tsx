@@ -5,10 +5,10 @@ import { ArrowLeft } from "lucide-react";
 
 export default function ManifestoPage() {
   return (
-    <div className="min-h-screen bg-[#F7F6F3] text-[#1F2933] font-sans selection:bg-[#2F3E46] selection:text-white">
+    <div className="min-h-screen bg-nook-paper text-[#1F2933] font-sans selection:bg-[#2F3E46] selection:text-white">
       
       {/* --- Navigation --- */}
-      <nav className="fixed top-0 w-full bg-[#F7F6F3]/95 backdrop-blur-sm border-b border-[#E1E5EA] z-50">
+      <nav className="fixed top-0 w-full bg-nook-paper/95 backdrop-blur-sm border-b border-nook-border z-50">
         <div className="max-w-3xl mx-auto px-6 h-20 flex justify-between items-center">
           <Link href="/" className="font-serif font-bold text-2xl tracking-tight text-[#2F3E46]">
             Nook.
@@ -23,7 +23,7 @@ export default function ManifestoPage() {
       <main className="max-w-2xl mx-auto px-6 pt-32 pb-32">
         
         <header className="mb-16">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#9AA5B1] mb-4">Protocol v1.0</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-nook-subtle mb-4">Protocol v1.0</p>
           <h1 className="font-serif font-bold text-5xl md:text-6xl text-[#1F2933] mb-6">
             The Public Ledger Manifesto.
           </h1>
@@ -41,7 +41,7 @@ export default function ManifestoPage() {
             </p>
           </section>
 
-          <hr className="border-[#E1E5EA]" />
+          <hr className="border-nook-border" />
 
           <section>
             <h3 className="font-sans font-bold text-lg uppercase tracking-wide text-[#1F2933] mb-2">II. The Solution</h3>
@@ -53,7 +53,7 @@ export default function ManifestoPage() {
             </p>
           </section>
 
-          <hr className="border-[#E1E5EA]" />
+          <hr className="border-nook-border" />
 
           <section>
             <h3 className="font-sans font-bold text-lg uppercase tracking-wide text-[#1F2933] mb-2">III. The Laws</h3>
@@ -70,15 +70,15 @@ export default function ManifestoPage() {
             </ul>
           </section>
 
-          <div className="pt-12 mt-12 border-t border-[#E1E5EA]">
-            <p className="font-sans text-sm text-[#9AA5B1] mb-6">Signed,</p>
+          <div className="pt-12 mt-12 border-t border-nook-border">
+            <p className="font-sans text-sm text-nook-subtle mb-6">Signed,</p>
             <div className="font-serif text-3xl font-bold text-[#1F2933]">The Nook Protocol</div>
           </div>
 
         </article>
 
         {/* --- Footer CTA --- */}
-        <div className="mt-20 p-8 bg-white border border-[#E1E5EA] rounded-sm text-center">
+        <div className="mt-20 p-8 bg-white border border-nook-border rounded-sm text-center">
           <p className="font-sans text-[#6B7280] mb-6">Are you ready to sign your name?</p>
           <Link href="/create" className="inline-block bg-[#2F3E46] text-white px-8 py-3 font-bold rounded-sm hover:bg-[#1a2429] transition-all">
             Start Your Ledger

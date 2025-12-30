@@ -35,7 +35,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-[80px] xl:w-[275px] sticky top-0 h-screen flex flex-col border-r border-[#E1E5EA] px-2 xl:px-6 py-8 items-center xl:items-start transition-all">
+    <aside className="w-20 xl:w-68.75 sticky top-0 h-screen flex flex-col border-r border-nook-border px-2 xl:px-6 py-8 items-center xl:items-start transition-all">
       <Link href="/home" className="mb-12 block">
         <h1 className="font-serif font-bold text-3xl text-[#2F3E46] hidden xl:block">Nook.</h1>
         <h1 className="font-serif font-bold text-3xl text-[#2F3E46] xl:hidden">N.</h1>
@@ -80,7 +80,7 @@ export default function Sidebar() {
           <p className="font-bold text-sm truncate">{username || "Loading..."}</p>
           <p className="text-xs text-[#6B7280]">Sign Out</p>
         </div>
-        <LogOut size={20} className="text-[#9AA5B1] hidden xl:block group-hover:text-[#BF4343] transition-colors" />
+        <LogOut size={20} className="text-nook-subtle hidden xl:block group-hover:text-[#BF4343] transition-colors" />
       </div>
     </aside>
   );

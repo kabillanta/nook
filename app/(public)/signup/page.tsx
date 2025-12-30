@@ -51,7 +51,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F7F6F3] p-6 text-[#1F2933]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-nook-paper p-6 text-[#1F2933]">
       <Link
         href="/"
         className="mb-8 font-serif font-bold text-3xl text-[#2F3E46]"
@@ -59,7 +59,7 @@ export default function SignupPage() {
         Nook.
       </Link>
 
-      <div className="w-full max-w-md bg-white border border-[#E1E5EA] shadow-sm p-8 rounded-sm">
+      <div className="w-full max-w-md bg-white border border-nook-border shadow-sm p-8 rounded-sm">
         <h1 className="font-serif text-2xl font-bold text-[#1F2933] mb-2">
           Initialize Identity
         </h1>
@@ -77,15 +77,15 @@ export default function SignupPage() {
               Claim Handle
             </label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9AA5B1]" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-nook-subtle" />
               <input
                 id="username"
                 type="text"
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E1E5EA] rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
+                className="w-full pl-10 pr-4 py-2.5 border border-nook-border rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
                 placeholder="e.g. alex_c"
               />
             </div>
-            <p className="text-[10px] text-[#9AA5B1]">
+            <p className="text-[10px] text-nook-subtle">
               This will be your public identifier forever.
             </p>
           </div>
@@ -99,13 +99,13 @@ export default function SignupPage() {
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9AA5B1]" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-nook-subtle" />
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E1E5EA] rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
+                className="w-full pl-10 pr-4 py-2.5 border border-nook-border rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
                 placeholder="name@example.com"
               />
             </div>
@@ -120,13 +120,13 @@ export default function SignupPage() {
               Set Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9AA5B1]" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-nook-subtle" />
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[#E1E5EA] rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
+                className="w-full pl-10 pr-4 py-2.5 border border-nook-border rounded-sm focus:outline-none focus:border-[#2F3E46] focus:ring-1 focus:ring-[#2F3E46] transition-all bg-[#F9FAFB] text-sm"
                 placeholder="Minimum 8 characters"
               />
             </div>
@@ -160,7 +160,7 @@ export default function SignupPage() {
           </button>
         </form>
 
-        <div className="mt-8 text-center border-t border-[#E1E5EA] pt-6">
+        <div className="mt-8 text-center border-t border-nook-border pt-6">
           <p className="text-sm text-[#6B7280]">
             Already have a handle?{" "}
             <Link

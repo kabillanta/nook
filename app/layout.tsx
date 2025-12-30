@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${libre.variable}`}>
-      <body className="bg-[#F7F6F3] text-[#1F2933] antialiased">
+      <body className="bg-nook-paper text-[#1F2933] antialiased">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

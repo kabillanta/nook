@@ -57,7 +57,7 @@ export default function CreatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3] text-[#1F2933] flex flex-col items-center pt-20 px-6">
+    <div className="min-h-screen bg-nook-paper text-[#1F2933] flex flex-col items-center pt-20 px-6">
       {/* --- Close Button --- */}
       <Link
         href="/home"
@@ -78,14 +78,14 @@ export default function CreatePage() {
         <form onSubmit={handleSubmit} className="space-y-10">
           {/* 1. The Promise */}
           <div className="space-y-3">
-            <label className="text-xs font-bold uppercase tracking-wider text-[#9AA5B1]">
+            <label className="text-xs font-bold uppercase tracking-wider text-nook-subtle">
               I commit to...
             </label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="e.g. ship the beta version by Friday..."
-              className="w-full bg-transparent text-3xl font-serif text-[#1F2933] placeholder:text-[#E1E5EA] border-b-2 border-[#E1E5EA] focus:border-[#2F3E46] focus:outline-none py-2 resize-none leading-normal h-32 transition-colors"
+              className="w-full bg-transparent text-3xl font-serif text-[#1F2933] placeholder:text-[#E1E5EA] border-b-2 border-nook-border focus:border-[#2F3E46] focus:outline-none py-2 resize-none leading-normal h-32 transition-colors"
               autoFocus
             />
           </div>
@@ -93,7 +93,7 @@ export default function CreatePage() {
           {/* 2. The Deadline (The Reaper) */}
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#9AA5B1] flex items-center gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-nook-subtle flex items-center gap-2">
                 <Calendar size={14} /> Deadline Date
               </label>
               <input
@@ -101,12 +101,12 @@ export default function CreatePage() {
                 required
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-white border border-[#E1E5EA] p-4 rounded-sm font-medium text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
+                className="w-full bg-white border border-nook-border p-4 rounded-sm font-medium text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
               />
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#9AA5B1] flex items-center gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-nook-subtle flex items-center gap-2">
                 <Clock size={14} /> Deadline Time
               </label>
               <input
@@ -114,13 +114,13 @@ export default function CreatePage() {
                 required
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full bg-white border border-[#E1E5EA] p-4 rounded-sm font-medium text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
+                className="w-full bg-white border border-nook-border p-4 rounded-sm font-medium text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
               />
             </div>
           </div>
 
           {/* 3. The Warning & Button */}
-          <div className="pt-8 flex items-center justify-between border-t border-[#E1E5EA]">
+          <div className="pt-8 flex items-center justify-between border-t border-nook-border">
             <div className="flex items-center gap-3 text-[#D4A373] text-sm max-w-xs">
               <AlertTriangle size={20} className="flex-shrink-0" />
               <p className="leading-tight">

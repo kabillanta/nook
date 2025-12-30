@@ -12,7 +12,7 @@ export default async function Feed() {
   const commitments = await getFeed();
 
   if (commitments.length === 0) {
-    return <div className="p-12 text-center text-[#9AA5B1]">The registry is empty.</div>;
+    return <div className="p-12 text-center text-nook-subtle">The registry is empty.</div>;
   }
 
   return (
@@ -20,7 +20,7 @@ export default async function Feed() {
       {commitments.map((item: any) => (
         <CommitmentCard key={item.id} item={item} />
       ))}
-      <div className="py-12 text-center text-[#9AA5B1] text-sm italic">You are all caught up.</div>
+      <div className="py-12 text-center text-nook-subtle text-sm italic">You are all caught up.</div>
     </div>
   );
 }

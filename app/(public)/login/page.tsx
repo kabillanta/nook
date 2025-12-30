@@ -69,11 +69,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3] flex items-center justify-center p-4 text-[#1F2933]">
-      <div className="w-full max-w-md bg-white border border-[#E1E5EA] p-8 shadow-sm rounded-sm">
+    <div className="min-h-screen bg-nook-paper flex items-center justify-center p-4 text-[#1F2933]">
+      <div className="w-full max-w-md bg-white border border-nook-border p-8 shadow-sm rounded-sm">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm text-[#9AA5B1] hover:text-[#2F3E46] mb-8 transition-colors"
+          className="flex items-center gap-2 text-sm text-nook-subtle hover:text-[#2F3E46] mb-8 transition-colors"
         >
           <ArrowLeft size={16} /> Back
         </Link>
@@ -91,7 +91,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#9AA5B1] mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-nook-subtle mb-1">
               Email
             </label>
             <input
@@ -99,12 +99,12 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#F7F6F3] border border-[#E1E5EA] p-3 rounded-sm text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
+              className="w-full bg-nook-paper border border-nook-border p-3 rounded-sm text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#9AA5B1] mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-nook-subtle mb-1">
               Password
             </label>
             <input
@@ -112,7 +112,7 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[#F7F6F3] border border-[#E1E5EA] p-3 rounded-sm text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
+              className="w-full bg-nook-paper border border-nook-border p-3 rounded-sm text-[#1F2933] focus:outline-none focus:border-[#2F3E46] transition-colors"
             />
           </div>
 
@@ -131,7 +131,7 @@ export default function LoginPage() {
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px bg-[#E1E5EA] flex-1"></div>
-          <span className="text-xs text-[#9AA5B1] uppercase font-bold">OR</span>
+          <span className="text-xs text-nook-subtle uppercase font-bold">OR</span>
           <div className="h-px bg-[#E1E5EA] flex-1"></div>
         </div>
 
@@ -140,7 +140,7 @@ export default function LoginPage() {
           onClick={handleGoogleLogin}
           type="button"
           disabled={loading}
-          className="w-full bg-white border border-[#E1E5EA] text-[#1F2933] font-bold py-3 rounded-sm hover:bg-[#F7F6F3] transition-all flex items-center justify-center gap-2"
+          className="w-full bg-white border border-nook-border text-[#1F2933] font-bold py-3 rounded-sm hover:bg-nook-paper transition-all flex items-center justify-center gap-2"
         >
           {/* Simple Google G Logo SVG */}
           <svg className="w-5 h-5" viewBox="0 0 24 24">
