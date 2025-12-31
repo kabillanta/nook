@@ -26,7 +26,7 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/home"); // Firebase handles the rest
+      router.push("/home");
     } catch (err: any) {
       setError("Invalid credentials.");
     } finally {
@@ -47,17 +47,17 @@ export default function LoginPage() {
       const user = result.user;
 
       // B. Check Backend: Does this user exist in Postgres?
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL
+      // Use the env variable we set earlier
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       const res = await fetch(`${apiUrl}/users/id/${user.uid}`);
 
-      if (res.ok) {
+      if (res.status === 200) {
         // CASE 1: User exists -> Go to Home
-        router.push("/home");
+        router.push("/home"); // or /dashboard
       } else {
-        // CASE 2: User is new (No Username) -> Send to Signup to finish setup
-        // We pass the uid so signup knows to skip the password step
-        router.push("/signup?step=username");
+        // CASE 2: User is new -> Go to Onboarding to set username
+        router.push("/onboarding");
       }
     } catch (err) {
       console.error(err);
@@ -67,6 +67,7 @@ export default function LoginPage() {
     }
   };
 
+  
   return (
     <div className="min-h-screen bg-nook-paper flex items-center justify-center p-4 text-[#1F2933]">
       <div className="w-full max-w-md bg-white border border-nook-border p-8 shadow-sm rounded-sm">
@@ -130,7 +131,9 @@ export default function LoginPage() {
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px bg-[#E1E5EA] flex-1"></div>
-          <span className="text-xs text-nook-subtle uppercase font-bold">OR</span>
+          <span className="text-xs text-nook-subtle uppercase font-bold">
+            OR
+          </span>
           <div className="h-px bg-[#E1E5EA] flex-1"></div>
         </div>
 

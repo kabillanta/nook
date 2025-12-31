@@ -90,6 +90,11 @@ class CompletionRequest(BaseModel):
     user_id: str
     proof: str
 
+class UserCreate(BaseModel):
+    id: str
+    email: str
+    username: str
+
 def get_db():
     db = SessionLocal()
     try:
@@ -273,3 +278,22 @@ def search_ledger(q: str, db: Session = Depends(get_db)):
         .all()
 
     return {"users": users, "commitments": commitments}
+
+@app.post("/users")
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    # 1. Check if username is taken
+    existing_username = db.query(models.User).filter(models.User.username == user.username).first()
+    if existing_username:
+        # This triggers the "Username already taken" error on your frontend
+        raise HTTPException(status_code=400, detail="Username taken")
+
+    # 2. Check if ID exists (idempotency)
+    existing_id = db.query(models.User).filter(models.User.id == user.id).first()
+    if existing_id:
+        return existing_id
+
+    # 3. Create
+    db_user = models.User(id=user.id, email=user.email, username=user.username)
+    db.add(db_user)
+    db.commit()
+    return db_user
