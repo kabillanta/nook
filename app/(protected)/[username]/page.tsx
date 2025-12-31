@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Home, User, Plus, Search, Calendar, Shield } from "lucide-react";
-import CommitmentCard from "@/components/CommitmentCard"; // <--- IMPORT THIS
-import Sidebar from "@/components/Sidebar";
+import { Calendar, Shield, LogOut } from "lucide-react";
+import CommitmentCard from "@/components/CommitmentCard";
+import Sidebar from "@/components/Sidebar"; // Make sure this is the UNIFIED component
 import RightSidebar from "@/components/RightSideBar";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 // --- Types ---
 interface ProfileData {
@@ -18,7 +20,7 @@ interface ProfileData {
       kept: number;
     };
   };
-  commitments: Array<any>; // reusing the type from card
+  commitments: Array<any>;
 }
 
 export default function ProfilePage() {
@@ -45,6 +47,11 @@ export default function ProfilePage() {
     fetchProfile();
   }, [params.username]);
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    window.location.href = "/login";
+  };
+
   const formatYear = (dateString: string) => {
     return new Date(dateString).getFullYear();
   };
@@ -52,7 +59,7 @@ export default function ProfilePage() {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-nook-paper text-nook-subtle">
-        Loading Record...
+        Loading...
       </div>
     );
 
@@ -60,7 +67,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-nook-paper text-[#1F2933]">
         <h1 className="font-serif text-3xl mb-2">404</h1>
-        <p className="text-[#6B7280]">User record not found.</p>
+        <p className="text-[#6B7280]">User not found.</p>
         <Link href="/home" className="mt-4 text-[#2F3E46] underline">
           Return Home
         </Link>
@@ -69,65 +76,63 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-nook-paper text-[#1F2933] font-sans">
-      <div className="flex w-full min-h-screen">
-        {/* --- LEFT SIDEBAR --- */}
+      <div className="flex w-full min-h-screen justify-center lg:justify-start">
         <Sidebar />
 
-        {/* --- CENTER PROFILE --- */}
-        <main className="flex-1 border-r border-nook-border min-w-0">
-          {/* Header Bar */}
-          <div className="sticky top-0 bg-nook-paper/95 backdrop-blur-sm border-b border-nook-border px-4 py-3 z-10 flex items-center gap-4">
-            <Link href="/home" className="lg:hidden text-nook-subtle">
-              <Home size={20} />
-            </Link>
-            <div>
-              <h2 className="font-bold text-lg leading-none">
-                {data.profile.username}
-              </h2>
-              <span className="text-xs text-[#6B7280]">
-                {data.profile.stats.total} commitments
-              </span>
-            </div>
-          </div>
+        {/* --- MAIN CONTENT --- */}
+        <main className="flex-1 w-full max-w-2xl border-x-0 md:border-x border-nook-border min-w-0 pb-24 md:pb-0">
+          <div className="relative p-6 md:p-8 border-b border-nook-border bg-white">
+            {/* Mobile Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="md:hidden absolute top-6 right-6 p-2 text-nook-subtle hover:text-[#BF4343] hover:bg-red-50 rounded-full transition-colors"
+              title="Log Out"
+            >
+              <LogOut size={20} />
+            </button>
 
-          {/* Profile Hero */}
-          <div className="p-6 border-b border-nook-border bg-white">
-            <div className="flex justify-between items-start mb-4">
-              <div className="h-24 w-24 bg-[#2F3E46] text-white rounded-full flex items-center justify-center font-serif text-3xl font-bold border-4 border-white shadow-sm uppercase">
+            {/* Avatar */}
+            <div className="mb-4">
+              <div className="h-20 w-20 md:h-24 md:w-24 bg-[#2F3E46] text-white rounded-full flex items-center justify-center font-serif text-2xl md:text-3xl font-bold border-4 border-white shadow-sm uppercase">
                 {data.profile.username.substring(0, 2)}
               </div>
             </div>
 
-            <h1 className="font-serif font-bold text-2xl text-[#1F2933]">
+            {/* Name & Handle */}
+            <h1 className="font-serif font-bold text-2xl md:text-3xl text-[#1F2933]">
               {data.profile.username}
             </h1>
-            <p className="text-[#6B7280] mb-4">@{data.profile.username}</p>
+            <p className="text-[#6B7280] mb-6">@{data.profile.username}</p>
 
-            <div className="flex gap-4 text-sm text-[#6B7280] mb-6">
-              <div className="flex items-center gap-1">
+            {/* Stats */}
+            <div className="flex flex-wrap gap-4 text-sm text-[#6B7280] mb-8">
+              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
                 <Calendar size={14} />
                 <span>Joined {formatYear(data.profile.joined_at)}</span>
               </div>
-              <div className="flex items-center gap-1 text-[#D4A373]">
+              <div className="flex items-center gap-2 bg-[#D4A373]/10 text-[#D4A373] px-3 py-1.5 rounded-full border border-[#D4A373]/20">
                 <Shield size={14} />
-                <span>Reputation: {data.profile.stats.kept} Kept</span>
+                <span className="font-bold">
+                  {data.profile.stats.kept} Kept Promises
+                </span>
               </div>
             </div>
 
-            <div className="flex gap-8 border-b border-nook-border -mx-6 px-6">
-              <div className="pb-3 border-b-2 border-[#2F3E46] font-bold text-[#1F2933] cursor-pointer">
+            {/* Tabs */}
+            <div className="flex gap-6 md:gap-8 border-b border-nook-border -mx-6 px-6 overflow-x-auto scrollbar-hide">
+              <div className="pb-3 border-b-2 border-[#2F3E46] font-bold text-[#1F2933] cursor-pointer whitespace-nowrap">
                 Records
               </div>
-              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors">
+              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors whitespace-nowrap">
                 Pending
               </div>
-              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors">
+              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors whitespace-nowrap">
                 Archived
               </div>
             </div>
           </div>
 
-          {/* Commitments List (Using Component) */}
+          {/* --- COMMITMENTS LIST --- */}
           <div className="w-full">
             {data.commitments.length === 0 ? (
               <div className="p-12 text-center text-nook-subtle italic">
@@ -135,7 +140,6 @@ export default function ProfilePage() {
               </div>
             ) : (
               data.commitments.map((item) => (
-                // We pass the item to the smart component
                 <CommitmentCard key={item.id} item={item} />
               ))
             )}
@@ -146,35 +150,11 @@ export default function ProfilePage() {
           </div>
         </main>
 
-        {/* --- RIGHT SIDEBAR --- */}
-        <RightSidebar />
+        {/* --- DESKTOP RIGHT SIDEBAR --- */}
+        <div className="hidden lg:block sticky top-0 h-screen">
+          <RightSidebar />
+        </div>
       </div>
     </div>
-  );
-}
-
-function NavItem({
-  icon,
-  text,
-  href,
-  active = false,
-}: {
-  icon: any;
-  text: string;
-  href: string;
-  active?: boolean;
-}) {
-  return (
-    <Link href={href}>
-      <div
-        className={`flex items-center gap-4 px-4 xl:px-4 py-3 rounded-full xl:rounded-full cursor-pointer transition-colors text-xl justify-center xl:justify-start ${
-          active
-            ? "font-bold text-[#2F3E46]"
-            : "text-[#1F2933] hover:bg-[#E1E5EA]/50"
-        }`}
-      >
-        {icon} <span className="hidden xl:inline">{text}</span>
-      </div>
-    </Link>
   );
 }

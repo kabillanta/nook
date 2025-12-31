@@ -85,7 +85,7 @@ export default function RightSidebar() {
           Nook is an immutable public ledger. <br/> Your reputation is your currency.
         </p>
         <div className="flex gap-2 flex-wrap">
-          <span>© 2024 Nook Inc.</span>
+          <span>© 2026 Nook Inc.</span>
         </div>
       </div>
 

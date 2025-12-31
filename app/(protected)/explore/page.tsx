@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Search, Flame } from "lucide-react"; // Imported Flame icon for "Trending"
+import { Search, Flame, Home, PlusSquare, User } from "lucide-react"; // Added Icons for Nav
 import Sidebar from "@/components/Sidebar";
 import CommitmentCard from "@/components/CommitmentCard";
 import RightSidebar from "@/components/RightSideBar";
@@ -29,23 +29,31 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen bg-nook-paper text-[#1F2933] font-sans">
-      <div className="flex w-full min-h-screen">
-
+      {/* Container: Centers content when sidebars are hidden on mobile */}
+      <div className="flex w-full min-h-screen justify-center lg:justify-start">
         <Sidebar />
 
-        <main className="flex-1 border-r border-nook-border min-w-0">
+        {/* --- MAIN CONTENT --- */}
+        {/* Added: max-w-2xl, pb-24 for mobile nav spacing */}
+        <main className="flex-1 w-full max-w-2xl border-x-0 md:border-x border-nook-border min-w-0 pb-24 md:pb-0">
+          {/* Header */}
           <div className="sticky top-0 bg-nook-paper/95 backdrop-blur-sm border-b border-nook-border px-4 py-4 z-10">
-            <h2 className="font-serif font-bold text-xl flex items-center gap-2">
-              <Flame className="text-nook-accent" size={20} />
+            <h2 className="font-serif font-bold text-xl flex items-center gap-2 text-[#2F3E46]">
+              <Flame className="text-[#BF4343]" size={20} fill="#BF4343" />{" "}
+              {/* Added fill for impact */}
               High Stakes
             </h2>
           </div>
 
           <div className="w-full">
             {loading ? (
-              <div className="p-12 text-center text-nook-subtle">Finding top commitments...</div>
+              <div className="p-12 text-center text-nook-subtle animate-pulse">
+                Finding top commitments...
+              </div>
             ) : commitments.length === 0 ? (
-               <div className="p-12 text-center text-nook-subtle">No data yet.</div>
+              <div className="p-12 text-center text-nook-subtle">
+                No data yet.
+              </div>
             ) : (
               commitments.map((item: any) => (
                 <CommitmentCard key={item.id} item={item} />
@@ -57,9 +65,10 @@ export default function ExplorePage() {
           </div>
         </main>
 
-        {/* Right Sidebar (Optional, or can be removed for Explore) */}
-        <RightSidebar />
-
+        {/* --- RIGHT SIDEBAR (Hidden on Mobile/Tablet) --- */}
+        <div className="hidden lg:block sticky top-0 h-screen">
+          <RightSidebar />
+        </div>
       </div>
     </div>
   );

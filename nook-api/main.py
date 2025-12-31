@@ -84,8 +84,7 @@ class CommitmentCreate(BaseModel):
     user_id: str 
     text: str
     deadline: str
-    
-    
+       
 class CompletionRequest(BaseModel):
     user_id: str
     proof: str
