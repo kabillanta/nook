@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Calendar, Shield, LogOut } from "lucide-react";
 import CommitmentCard from "@/components/CommitmentCard";
-import Sidebar from "@/components/Sidebar"; // Make sure this is the UNIFIED component
+import Sidebar from "@/components/Sidebar";
 import RightSidebar from "@/components/RightSideBar";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -28,6 +28,11 @@ export default function ProfilePage() {
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // 1. LOGIC: Added State for Tabs
+  const [activeTab, setActiveTab] = useState<
+    "records" | "pending" | "archived"
+  >("records");
 
   useEffect(() => {
     async function fetchProfile() {
@@ -56,6 +61,30 @@ export default function ProfilePage() {
     return new Date(dateString).getFullYear();
   };
 
+  const getFilteredCommitments = () => {
+    if (!data) return [];
+
+    return data.commitments.filter((item) => {
+      // Normalize to lowercase just in case (e.g. "Kept" vs "kept")
+      const status = item.status?.toLowerCase().trim();
+
+      if (activeTab === "pending") {
+        return status === "pending";
+      }
+
+      if (activeTab === "records") {
+        // Show both Kept and Broken in the main history tab
+        return status === "kept" || status === "broken";
+      }
+
+      if (activeTab === "archived") {
+        return status === "archived";
+      }
+
+      return false;
+    });
+  };
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-nook-paper text-nook-subtle">
@@ -73,6 +102,9 @@ export default function ProfilePage() {
         </Link>
       </div>
     );
+
+  // 3. LOGIC: Get the list to render
+  const displayList = getFilteredCommitments();
 
   return (
     <div className="min-h-screen bg-nook-paper text-[#1F2933] font-sans">
@@ -118,28 +150,51 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Tabs */}
+            {/* LOGIC + LAYOUT: Tabs now have onClick handlers and conditional styling */}
             <div className="flex gap-6 md:gap-8 border-b border-nook-border -mx-6 px-6 overflow-x-auto scrollbar-hide">
-              <div className="pb-3 border-b-2 border-[#2F3E46] font-bold text-[#1F2933] cursor-pointer whitespace-nowrap">
+              <button
+                onClick={() => setActiveTab("records")}
+                className={`pb-3 border-b-2 transition-colors whitespace-nowrap ${
+                  activeTab === "records"
+                    ? "border-[#2F3E46] font-bold text-[#1F2933]"
+                    : "border-transparent text-nook-subtle hover:text-[#1F2933]"
+                }`}
+              >
                 Records
-              </div>
-              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors whitespace-nowrap">
+              </button>
+              <button
+                onClick={() => setActiveTab("pending")}
+                className={`pb-3 border-b-2 transition-colors whitespace-nowrap ${
+                  activeTab === "pending"
+                    ? "border-[#2F3E46] font-bold text-[#1F2933]"
+                    : "border-transparent text-nook-subtle hover:text-[#1F2933]"
+                }`}
+              >
                 Pending
-              </div>
-              <div className="pb-3 border-b-2 border-transparent text-nook-subtle hover:text-[#1F2933] cursor-pointer transition-colors whitespace-nowrap">
+              </button>
+              <button
+                onClick={() => setActiveTab("archived")}
+                className={`pb-3 border-b-2 transition-colors whitespace-nowrap ${
+                  activeTab === "archived"
+                    ? "border-[#2F3E46] font-bold text-[#1F2933]"
+                    : "border-transparent text-nook-subtle hover:text-[#1F2933]"
+                }`}
+              >
                 Archived
-              </div>
+              </button>
             </div>
           </div>
 
-          {/* --- COMMITMENTS LIST --- */}
+          {/* LOGIC: Rendering the 'displayList' */}
           <div className="w-full">
-            {data.commitments.length === 0 ? (
+            {displayList.length === 0 ? (
               <div className="p-12 text-center text-nook-subtle italic">
-                This user has no public record.
+                {activeTab === "pending"
+                  ? "No active commitments."
+                  : "No records found."}
               </div>
             ) : (
-              data.commitments.map((item) => (
+              displayList.map((item) => (
                 <CommitmentCard key={item.id} item={item} />
               ))
             )}
