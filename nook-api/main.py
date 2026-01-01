@@ -1,19 +1,24 @@
 import os
+import json
 import firebase_admin
 from firebase_admin import auth, credentials
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, UploadFile, Form, File
 from fastapi.middleware.cors import CORSMiddleware 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal, engine
 import models
 from datetime import datetime , timedelta
-from sqlalchemy import or_
+from sqlalchemy import and_
 from apscheduler.schedulers.background import BackgroundScheduler 
 from contextlib import asynccontextmanager 
 from database import SessionLocal
 from models import Commitment, User
 from utils.email_sender import send_reaper_email
+from google import genai
+from google.genai import types
+
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -28,7 +33,7 @@ def reaper_job():
     It creates its own database session, checks for dead commitments,
     marks them as 'broken', and closes the session.
     """
-    db = SessionLocal() # Create a fresh DB session
+    db = SessionLocal()
     try:
         now = datetime.utcnow()
         print(f"💀 The Reaper is scanning... (Time: {now})")
@@ -350,3 +355,98 @@ async def trigger_reminders(
             print(f"⚠️ User {username} has no email.")
 
     return {"status": "success", "emails_sent": sent_count}
+
+
+@app.post("/verify-commitment")
+async def verify_proof(
+    file: UploadFile = File(...), 
+    commitment_id: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    print(f"⚖️ Judging evidence for Commitment #{commitment_id}...")
+
+    # Fetch Commitment
+    commitment = db.query(Commitment).filter(Commitment.id == commitment_id).first()
+    
+    if not commitment:
+        raise HTTPException(status_code=404, detail="Commitment not found")
+
+    # Read file content
+    file_content = await file.read()
+    
+    # --- THE "LORE-ACCURATE" PROMPT ---
+    prompt_text = f"""
+    SYSTEM CONTEXT:
+    You are the "High Judge" of Nook, a ruthless anti-procrastination protocol.
+    HOW IT WORKS: Users make a pledge. If they fail, "The Reaper" punishes them (public shaming). 
+    Users are currently in the "Fear Phase." They are desperate to prove they did the work to avoid punishment.
+    Be fair and little liberal.
+    THE PLEDGE:
+    The user claimed: "{commitment.text}"
+    
+    THE EVIDENCE:
+    The user has submitted the attached image as their "Proof of Work."
+    
+    YOUR INSTRUCTIONS:
+    1. USE YOUR VISION: Look deeply at the image. Read any text on screens/papers. Identify objects.
+    2. CONNECT THE DOTS: Does the visual evidence support the text pledge?
+       - If they said "Code the backend" and you see a screenshot of Python/JS code (even if complex), VERIFY IT.
+       - If they said "Workout" and you see gym equipment or sweat, VERIFY IT.
+    3. BE REASONABLE: Do not look for perfection. Look for *proof of effort*.
+    
+    OUTPUT FORMAT:
+    Return strictly valid JSON. Do not add markdown blocks.
+    {{
+        "analysis": "Describe exactly what you see that matches the pledge (e.g. 'I see a VS Code terminal with a function named verify_proof').",
+        "verdict": "TRUE" (if evidence supports pledge) or "FALSE" (if unrelated/fake)
+    }}
+    """
+
+    try:
+        # Ask Gemini (Using the new SDK)
+        response = await client.aio.models.generate_content(
+            model='models/gemini-2.5-flash-lite',
+            contents=[
+                types.Content(
+                    parts=[
+                        types.Part.from_bytes(data=file_content, mime_type=file.content_type),
+                        types.Part.from_text(text=prompt_text)
+                    ]
+                )
+            ]
+        )
+        
+        # Clean and Parse JSON
+        raw_text = response.text.strip()
+        # Remove markdown wrapping if Gemini adds it (e.g. ```json ... ```)
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("\n", 1)[1]
+            if raw_text.endswith("```"):
+                raw_text = raw_text.rsplit("\n", 1)[0]
+        
+        result = json.loads(raw_text)
+        verdict = result.get("verdict", "FALSE").upper()
+        analysis = result.get("analysis", "No analysis provided.")
+
+        print(f"🤖 AI Verdict: {verdict}")
+        print(f"🧐 Analysis: {analysis}")
+
+        if verdict == "TRUE":
+            commitment.status = "kept"
+            db.commit()
+            return {
+                "status": "approved", 
+                "message": "The High Judge is satisfied. You are safe.",
+                "ai_analysis": analysis
+            }
+        else:
+            return {
+                "status": "rejected", 
+                "message": "The High Judge rejects your evidence.",
+                "ai_analysis": analysis
+            }
+
+    except Exception as e:
+        print(f"AI Error: {e}")
+        # In case of JSON error or API error, return 500
+        raise HTTPException(status_code=500, detail=f"Judgment failed: {str(e)}")
