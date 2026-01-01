@@ -1,15 +1,19 @@
+import os
 import firebase_admin
 from firebase_admin import auth, credentials
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal, engine
 import models
-from datetime import datetime
+from datetime import datetime , timedelta
 from sqlalchemy import or_
 from apscheduler.schedulers.background import BackgroundScheduler 
 from contextlib import asynccontextmanager 
+from database import SessionLocal
+from models import Commitment, User
+from utils.email_sender import send_reaper_email
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -296,3 +300,53 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     return db_user
+
+@app.post("/cron/send-reminders")
+async def trigger_reminders(
+    x_secret_key: str = Header(None), 
+    db: Session = Depends(get_db)
+):
+    # 1. Security Check
+    secret = os.getenv("CRON_SECRET", "my_secure_cron_key")
+    if x_secret_key != secret:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    print("💀 The Reaper is checking the ledger...")
+
+    # 2. Time Window (Next 24 to 25 hours from now)
+    now = datetime.utcnow()
+    window_start = now + timedelta(hours=24)
+    window_end = now + timedelta(hours=25)
+
+    # 3. EFFICIENT QUERY (The "Join")
+    # We fetch: Commitment Text, User Email, User Name
+    # We filter by: Status is 'pending' AND Deadline is in the target window
+    results = (
+        db.query(Commitment.text, User.email, User.username)
+        .join(User, Commitment.user_id == User.id)
+        .filter(
+            and_(
+                Commitment.status == "pending",  # Lowercase match based on your model default
+                Commitment.deadline >= window_start,
+                Commitment.deadline < window_end
+            )
+        )
+        .all()
+    )
+
+    print(f"   Found {len(results)} commitments due.")
+    
+    sent_count = 0
+
+    # 4. Process Results & Send Emails
+    # 'results' comes back as a list of tuples: [('Run 5km', 'john@email.com', 'john_doe'), ...]
+    for text, email, username in results:
+        if email:
+            # Note: passing 'text' as the commitment title
+            if send_reaper_email(email, username, text):
+                sent_count += 1
+                print(f"✅ Sent to {username}")
+        else:
+            print(f"⚠️ User {username} has no email.")
+
+    return {"status": "success", "emails_sent": sent_count}

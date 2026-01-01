@@ -1,0 +1,119 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+import dotenv
+
+dotenv.load_dotenv()
+
+# SMTP Configuration
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SENDER_EMAIL = os.getenv("EMAIL_USER")
+SENDER_PASSWORD = os.getenv("EMAIL_PASS")
+
+def send_reaper_email(to_email: str, username: str, commitment_text: str):
+    """
+    Sends a formal, themed 24-hour warning email.
+    """
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = f"Nook Registry <{SENDER_EMAIL}>"
+        msg["To"] = to_email
+        msg["Subject"] = "FORMAL NOTICE: 24 Hours Remaining"
+
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+            </style>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #F2F0E9; font-family: 'Lora', 'Georgia', serif; color: #1F2933;">
+            
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #F2F0E9; padding: 40px 10px;">
+                <tr>
+                    <td align="center">
+                        
+                        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 500px; background-color: #FFFFFF; border: 1px solid #D1D5DB; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            
+                            <tr>
+                                <td style="padding: 32px 32px 20px 32px; border-bottom: 2px solid #1F2933;">
+                                    <span style="font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: #1F2933; letter-spacing: -0.5px;">
+                                        Nook.
+                                    </span>
+                                    <span style="float: right; font-size: 10px; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; padding-top: 10px;">
+                                        Public Record
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding: 32px;">
+                                    
+                                    <div style="font-size: 11px; font-weight: bold; color: #8E2B2B; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px;">
+                                        ⚠ Final Notice
+                                    </div>
+
+                                    <h1 style="font-family: 'Playfair Display', serif; font-size: 20px; color: #1F2933; margin: 0 0 16px 0;">
+                                        The deadline approaches.
+                                    </h1>
+
+                                    <p style="font-size: 15px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                                        Citizen <strong>{username}</strong>,
+                                    </p>
+
+                                    <p style="font-size: 15px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                                        This correspondence serves as a formal reminder regarding your active declaration. The registry indicates that exactly <strong>24 hours remain</strong> before your commitment is archived.
+                                    </p>
+
+                                    <div style="background-color: #F9FAFB; border-left: 3px solid #1F2933; padding: 16px 20px; font-style: italic; color: #111827; font-size: 16px; margin-bottom: 24px;">
+                                        "{commitment_text}"
+                                    </div>
+
+                                    <p style="font-size: 15px; line-height: 1.6; color: #374151; margin-bottom: 32px;">
+                                        Failure to provide proof of completion by the designated time will result in a permanent mark of <strong>"BROKEN"</strong> on your public ledger.
+                                    </p>
+
+                                    <div style="text-align: center;">
+                                        <a href="https://nook-beta.vercel.app/login" style="background-color: #1F2933; color: #FFFFFF; text-decoration: none; padding: 12px 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; display: inline-block;">
+                                            Declare Completion
+                                        </a>
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="background-color: #F8F8F8; padding: 20px 32px; border-top: 1px solid #E5E7EB; text-align: center;">
+                                    <p style="font-size: 11px; color: #9CA3AF; margin: 0; font-family: sans-serif;">
+                                        Nook Inc. &bull; Immutable Accountability Protocol
+                                    </p>
+                                    <p style="font-size: 10px; color: #D1D5DB; margin: 8px 0 0 0; font-family: sans-serif;">
+                                        Automated by The Reaper System. Do not reply.
+                                    </p>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(html, "html"))
+
+        # Connection Logic
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
+        server.quit()
+        
+        return True
+    except Exception as e:
+        print(f"❌ SMTP Error to {to_email}: {e}")
+        return False
