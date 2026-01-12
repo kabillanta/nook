@@ -1,2 +1,0 @@
-completed V1 ready to ship
-v2 - AI authentication
